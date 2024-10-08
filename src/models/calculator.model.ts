@@ -5,12 +5,14 @@ import { OperatorKeys } from '../enums/operator-keys.enum';
 import { IContext } from '../interfaces';
 import { ICalculatorModel } from '../interfaces/calculator-model.interface';
 import { ICalculatorState } from '../interfaces/calculator-state.interface';
+import { ICalculatorObserver } from '../interfaces/calculator-observer.interface'; 
 import { EnteringFirstNumberState } from '../states/entering-first-number-state';
 import { StateData } from './state-data.model';
 
 export class CalculatorModel implements ICalculatorModel, IContext {
 
   private _state: ICalculatorState;
+  private observers: ICalculatorObserver[] = [];
 
   public constructor() {
     this._state = new EnteringFirstNumberState(this, new StateData.Builder().build());
@@ -26,6 +28,14 @@ export class CalculatorModel implements ICalculatorModel, IContext {
 
   public pressOperatorKey(key: OperatorKeys): void {
     this._state.binaryOperator(key);
+  }
+
+  public attatch(observer: ICalculatorObserver): void {
+      this.observers.push(observer);
+  }
+
+  public detach(observer: ICalculatorObserver): void {
+    this.observers = this.observers.filter(obs => obs !== observer);
   }
 
   public pressActionKey(key: ActionKeys): void {
